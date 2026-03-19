@@ -1,0 +1,10 @@
+.git
+.github
+.claude
+.next
+node_modules
+__tests__
+*.test.ts
+jest.config.ts
+README.md
+.env*.local
