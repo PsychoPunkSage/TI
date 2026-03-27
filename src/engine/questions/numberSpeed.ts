@@ -366,6 +366,24 @@ export const NUMBER_SPEED_POOL: NumberSpeedPoolItem[] = [
   { numbers: [88, 93, 96], correctAnswer: 88 },   // min=88, max=96, ref=93 → |88-93|=5, |96-93|=3 → 88
 ];
 
+// --- Level 2 pool: no-outlier questions only ---
+
+const OUTLIER_RATIO_THRESHOLD = 3.0;
+const MIN_GAP = 2;
+
+function isNoOutlier(item: NumberSpeedPoolItem): boolean {
+  const sorted = [...item.numbers].sort((a, b) => a - b) as [number, number, number];
+  const [min, ref, max] = sorted;
+  const gap1 = ref - min;
+  const gap2 = max - ref;
+  if (gap1 < MIN_GAP || gap2 < MIN_GAP) return false;
+  const ratio = Math.max(gap1, gap2) / Math.min(gap1, gap2);
+  return ratio <= OUTLIER_RATIO_THRESHOLD;
+}
+
+export const NUMBER_SPEED_LEVEL2_POOL: NumberSpeedPoolItem[] =
+  NUMBER_SPEED_POOL.filter(isNoOutlier);
+
 /**
  * Generates a NumberSpeedQuestion from a pool item.
  * The three numbers are shuffled to randomise box positions.
