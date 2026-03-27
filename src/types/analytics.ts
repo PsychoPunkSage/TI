@@ -18,11 +18,13 @@ export interface SectionTrend {
   sectionName: string;
   trendSlope: number;
   trendDirection: TrendDirection;
+  speedTrendDirection: TrendDirection;
   dataPoints: Array<{
     attemptNumber: number;
     sessionId: string;
     startedAt: number;
     accuracyPercent: number;
+    avgResponseTimeMs: number;
     cognitiveEfficiencyScore: number;
   }>;
 }

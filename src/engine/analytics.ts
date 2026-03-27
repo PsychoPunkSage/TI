@@ -33,6 +33,12 @@ function classifyTrend(slope: number): TrendDirection {
   return slope > 0 ? 'improving' : 'declining';
 }
 
+// For speed: negative slope (getting faster) = improving
+function classifySpeedTrend(slope: number): TrendDirection {
+  if (Math.abs(slope) < 5) return 'stable';
+  return slope < 0 ? 'improving' : 'declining';
+}
+
 export function assembleAnalysisSummary(
   sessions: DbSession[],
   allSectionStats: DbSectionStat[]
@@ -78,16 +84,25 @@ export function assembleAnalysisSummary(
     const slope = linearRegressionSlope(points);
     const direction = classifyTrend(slope);
 
+    const speedPoints = sectionData.map((s) => ({
+      x: s.attemptNumber,
+      y: s.avgResponseTimeMs,
+    }));
+    const speedSlope = linearRegressionSlope(speedPoints);
+    const speedTrendDirection = classifySpeedTrend(speedSlope);
+
     return {
       sectionId: sectionMeta.id,
       sectionName: sectionMeta.name,
       trendSlope: slope,
       trendDirection: direction,
+      speedTrendDirection,
       dataPoints: sectionData.map((s) => ({
         attemptNumber: s.attemptNumber,
         sessionId: s.sessionId,
         startedAt: s.startedAt,
         accuracyPercent: s.accuracyPercent,
+        avgResponseTimeMs: s.avgResponseTimeMs,
         cognitiveEfficiencyScore: s.cognitiveEfficiencyScore,
       })),
     };
