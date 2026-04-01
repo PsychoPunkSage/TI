@@ -2,7 +2,9 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import type { Question, AnswerValue } from '@/types/questions';
+import type { QuestionLog } from '@/types/session';
 import { QuestionCard } from './QuestionCard';
+import { WrongAnswersReview } from '@/components/review/WrongAnswersReview';
 
 interface PracticeScreenProps {
   sectionName: string;
@@ -13,6 +15,7 @@ interface PracticeScreenProps {
   onStartTimedTest: () => void;
   isPracticeComplete: boolean;
   onRequestCancel?: () => void;
+  wrongAnswerLogs?: QuestionLog[];
 }
 
 export function PracticeScreen({
@@ -24,9 +27,11 @@ export function PracticeScreen({
   onStartTimedTest,
   isPracticeComplete,
   onRequestCancel,
+  wrongAnswerLogs,
 }: PracticeScreenProps) {
   const [selectedAnswer, setSelectedAnswer] = useState<AnswerValue | null>(null);
   const [hasAnswered, setHasAnswered] = useState(false);
+  const [showReview, setShowReview] = useState(false);
 
   const autoAdvanceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -54,6 +59,33 @@ export function PracticeScreen({
     hasAnswered && String(selectedAnswer) === String(question.correctAnswer);
 
   if (isPracticeComplete) {
+    const wrongEntries = (wrongAnswerLogs ?? [])
+      .filter((log) => !log.isCorrect && log.questionSnapshot)
+      .map((log) => ({
+        question: log.questionSnapshot!,
+        selectedAnswer: log.selectedAnswer,
+        correctAnswer: log.correctAnswer,
+      }));
+
+    if (showReview) {
+      return (
+        <div className="max-w-2xl mx-auto py-12 px-6">
+          <div className="bg-white rounded-xl shadow-sm p-8">
+            <div className="mb-4">
+              <span className="text-sm text-gray-500 uppercase tracking-wide font-medium">
+                {sectionName} — Practice Review
+              </span>
+            </div>
+            <WrongAnswersReview
+              logs={wrongEntries}
+              title="Wrong Answers"
+              onDismiss={() => setShowReview(false)}
+            />
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="max-w-2xl mx-auto py-12 px-6">
         <div className="bg-white rounded-xl shadow-sm p-8">
@@ -72,6 +104,14 @@ export function PracticeScreen({
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8 text-sm text-amber-800">
             No feedback will be shown during the timed test. Answer as quickly and accurately as you can.
           </div>
+          {wrongEntries.length > 0 && (
+            <button
+              onClick={() => setShowReview(true)}
+              className="w-full py-3 mb-3 border border-red-200 bg-red-50 text-red-700 text-sm font-semibold rounded-lg hover:bg-red-100 cursor-pointer"
+            >
+              Review {wrongEntries.length} wrong answer{wrongEntries.length !== 1 ? 's' : ''}
+            </button>
+          )}
           <button
             onClick={onStartTimedTest}
             className="w-full py-4 bg-[#2d4a7a] text-white text-lg font-semibold rounded-lg hover:bg-[#3a5d99] cursor-pointer"
