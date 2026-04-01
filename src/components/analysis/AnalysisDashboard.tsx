@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { AnalysisSummary } from '@/types/analytics';
 import { TrendChart } from './TrendChart';
+import { SpeedTrendChart } from './SpeedTrendChart';
 import { SessionComparisonGrid } from './SessionComparisonGrid';
 import { BestWorstAverageTable } from './BestWorstAverageTable';
 
@@ -52,7 +53,10 @@ export function AnalysisDashboard({ summary }: AnalysisDashboardProps) {
 
       {/* Tab content */}
       {activeTab === 'trends' && (
-        <TrendChart sectionTrends={summary.sectionTrends} />
+        <div className="flex flex-col gap-6">
+          <TrendChart sectionTrends={summary.sectionTrends} />
+          <SpeedTrendChart sectionTrends={summary.sectionTrends} />
+        </div>
       )}
       {activeTab === 'comparison' && (
         <SessionComparisonGrid
