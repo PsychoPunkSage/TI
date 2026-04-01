@@ -30,6 +30,7 @@ export default function SectionPage() {
     timedQuestions,
     currentQuestionIndex,
     completedSections,
+    practiceAnswerLogs,
     sessionId,
     isSingleSection,
     beginPractice,
@@ -142,6 +143,7 @@ export default function SectionPage() {
           onStartTimedTest={beginTimedTest}
           isPracticeComplete={isPracticeComplete}
           onRequestCancel={handleCancelRequest}
+          wrongAnswerLogs={practiceAnswerLogs}
         />
         {showCancelModal && (
           <CancelTestModal

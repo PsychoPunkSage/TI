@@ -21,6 +21,11 @@ export default function HomePage() {
     router.replace(`/test/${sectionId}`);
   }
 
+  function handleStartSectionWithLevel(sectionId: SectionId, level: 1 | 2) {
+    initSingleSectionSession(sectionId, level);
+    router.replace(`/test/${sectionId}`);
+  }
+
   return (
     <AppShell>
       <div className="max-w-2xl mx-auto py-16">
@@ -112,12 +117,29 @@ export default function HomePage() {
                     {section.description}
                   </p>
                 </div>
-                <button
-                  onClick={() => handleStartSection(section.id)}
-                  className="shrink-0 px-4 py-2 bg-[#2d4a7a] text-white text-sm font-semibold rounded-lg hover:bg-[#3a5d99] cursor-pointer"
-                >
-                  Start Section
-                </button>
+                {section.id === 'number_speed' ? (
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      onClick={() => handleStartSectionWithLevel('number_speed', 1)}
+                      className="px-4 py-2 bg-[#2d4a7a] text-white text-sm font-semibold rounded-lg hover:bg-[#3a5d99] cursor-pointer"
+                    >
+                      Lv 1
+                    </button>
+                    <button
+                      onClick={() => handleStartSectionWithLevel('number_speed', 2)}
+                      className="px-4 py-2 bg-[#2d4a7a] text-white text-sm font-semibold rounded-lg hover:bg-[#3a5d99] cursor-pointer"
+                    >
+                      Lv 2
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleStartSection(section.id)}
+                    className="shrink-0 px-4 py-2 bg-[#2d4a7a] text-white text-sm font-semibold rounded-lg hover:bg-[#3a5d99] cursor-pointer"
+                  >
+                    Start Section
+                  </button>
+                )}
               </div>
             ))}
           </div>

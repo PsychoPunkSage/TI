@@ -21,6 +21,7 @@ export interface DbQuestionLog {
   correctAnswer: string;
   isCorrect: 0 | 1;
   isPractice: 0 | 1;
+  questionSnapshotJson?: string;
 }
 
 export interface DbSectionStat {

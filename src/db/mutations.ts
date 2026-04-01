@@ -28,6 +28,9 @@ export function saveQuestionLog(log: QuestionLog): void {
     correctAnswer: String(log.correctAnswer),
     isCorrect: log.isCorrect ? 1 : 0,
     isPractice: log.isPractice ? 1 : 0,
+    questionSnapshotJson: log.questionSnapshot
+      ? JSON.stringify(log.questionSnapshot)
+      : undefined,
   };
   void db.questionLogs.put(dbLog);
 }

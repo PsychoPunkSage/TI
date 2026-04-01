@@ -2,7 +2,7 @@ import type { Question, SectionId } from '@/types/questions';
 import { shuffled } from '../shuffle';
 import { REASONING_POOL, generateReasoningQuestion } from './reasoning';
 import { WORD_MEANING_POOL, generateWordMeaningQuestion } from './wordMeaning';
-import { NUMBER_SPEED_POOL, generateNumberSpeedQuestion } from './numberSpeed';
+import { NUMBER_SPEED_POOL, NUMBER_SPEED_LEVEL2_POOL, generateNumberSpeedQuestion } from './numberSpeed';
 import { PERCEPTUAL_SPEED_POOL, generatePerceptualSpeedQuestion } from './perceptualSpeed';
 import { SPATIAL_POOL, generateSpatialQuestion } from './spatial';
 import { getSectionMeta } from '@/constants/sections';
@@ -32,7 +32,8 @@ function buildQuestions<T>(
 export function preloadSection(
   sectionId: SectionId,
   isPractice: boolean,
-  seed?: number
+  seed?: number,
+  numberSpeedLevel: 1 | 2 = 1
 ): Question[] {
   const meta = getSectionMeta(sectionId);
   const count = isPractice
@@ -61,13 +62,15 @@ export function preloadSection(
         baseSeed
       );
 
-    case 'number_speed':
+    case 'number_speed': {
+      const pool = numberSpeedLevel === 2 ? NUMBER_SPEED_LEVEL2_POOL : NUMBER_SPEED_POOL;
       return buildQuestions(
-        NUMBER_SPEED_POOL,
+        pool,
         count,
         (item, i, s) => generateNumberSpeedQuestion(item, i, s),
         baseSeed
       );
+    }
 
     case 'perceptual_speed':
       return buildQuestions(

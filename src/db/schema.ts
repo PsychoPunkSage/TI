@@ -16,6 +16,15 @@ export class GiaDatabase extends Dexie {
       sectionStats:
         'id, sessionId, sectionId, [sessionId+sectionId], accuracyPercent',
     });
+
+    // v2: adds questionSnapshotJson (non-indexed) to questionLogs for wrong-answer review
+    this.version(2).stores({
+      sessions: 'id, startedAt, isComplete, cognitiveEfficiencyScore',
+      questionLogs:
+        '[sessionId+questionId], sessionId, sectionId, [sessionId+sectionId]',
+      sectionStats:
+        'id, sessionId, sectionId, [sessionId+sectionId], accuracyPercent',
+    });
   }
 }
 
