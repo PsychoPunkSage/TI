@@ -1,4 +1,4 @@
-import type { SectionId, AnswerValue } from './questions';
+import type { SectionId, AnswerValue, Question } from './questions';
 
 export type TestPhase =
   | 'idle'
@@ -19,6 +19,7 @@ export interface QuestionLog {
   correctAnswer: AnswerValue;
   isCorrect: boolean;
   isPractice: boolean;
+  questionSnapshot?: Question;
 }
 
 export interface SectionResult {

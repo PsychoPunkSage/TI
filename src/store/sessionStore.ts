@@ -23,11 +23,12 @@ interface SessionState {
   timedAnswerLogs: QuestionLog[];
   completedSections: Partial<Record<SectionId, SectionResult>>;
   isSingleSection: boolean;
+  numberSpeedLevel: 1 | 2;
 }
 
 interface SessionActions {
   initSession: () => void;
-  initSingleSectionSession: (sectionId: SectionId) => void;
+  initSingleSectionSession: (sectionId: SectionId, numberSpeedLevel?: 1 | 2) => void;
   startSection: (sectionIndex: number) => void;
   beginPractice: () => void;
   beginTimedTest: () => void;
@@ -52,6 +53,7 @@ const initialState: SessionState = {
   timedAnswerLogs: [],
   completedSections: {},
   isSingleSection: false,
+  numberSpeedLevel: 1,
 };
 
 export const useSessionStore = create<SessionState & SessionActions>((set, get) => ({
@@ -78,7 +80,7 @@ export const useSessionStore = create<SessionState & SessionActions>((set, get) 
     });
   },
 
-  initSingleSectionSession: (sectionId: SectionId) => {
+  initSingleSectionSession: (sectionId: SectionId, numberSpeedLevel: 1 | 2 = 1) => {
     const sessionId = generateId();
     const sectionIndex = SECTION_ORDER.findIndex((s) => s.id === sectionId);
     set({
@@ -88,6 +90,7 @@ export const useSessionStore = create<SessionState & SessionActions>((set, get) 
       currentSectionIndex: sectionIndex,
       currentSectionId: sectionId,
       isSingleSection: true,
+      numberSpeedLevel,
     });
     void saveSession({
       id: sessionId,
@@ -114,9 +117,9 @@ export const useSessionStore = create<SessionState & SessionActions>((set, get) 
   },
 
   beginPractice: () => {
-    const { currentSectionId } = get();
+    const { currentSectionId, numberSpeedLevel } = get();
     if (!currentSectionId) return;
-    const practiceQuestions = preloadSection(currentSectionId, true);
+    const practiceQuestions = preloadSection(currentSectionId, true, undefined, numberSpeedLevel);
     set({
       phase: 'practice',
       practiceQuestions,
@@ -126,9 +129,9 @@ export const useSessionStore = create<SessionState & SessionActions>((set, get) 
   },
 
   beginTimedTest: () => {
-    const { currentSectionId } = get();
+    const { currentSectionId, numberSpeedLevel } = get();
     if (!currentSectionId) return;
-    const timedQuestions = preloadSection(currentSectionId, false);
+    const timedQuestions = preloadSection(currentSectionId, false, undefined, numberSpeedLevel);
     set({
       phase: 'timed_test',
       timedQuestions,
@@ -179,6 +182,7 @@ export const useSessionStore = create<SessionState & SessionActions>((set, get) 
       correctAnswer: currentQuestion.correctAnswer,
       isCorrect,
       isPractice,
+      questionSnapshot: currentQuestion,
     };
 
     const nextQuestionIndex = currentQuestionIndex + 1;
