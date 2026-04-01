@@ -8,6 +8,7 @@ import { CognitiveScoreCard } from './CognitiveScoreCard';
 import { SectionAccuracyChart } from './SectionAccuracyChart';
 import { ResponseTimeLine } from './ResponseTimeLine';
 import { SectionSummaryTable } from './SectionSummaryTable';
+import { WrongAnswersDashboardSection } from './WrongAnswersDashboardSection';
 import Link from 'next/link';
 
 interface ResultsDashboardProps {
@@ -131,6 +132,8 @@ export function ResultsDashboard({
         </div>
 
         <SectionSummaryTable sectionResults={sectionResults} />
+
+        <WrongAnswersDashboardSection questionLogs={questionLogs} />
       </div>
 
       <div className="mt-8 flex gap-4">
